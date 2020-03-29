@@ -67,34 +67,96 @@ class Bus(object):
         if self.data == None:
             self.data = data
         else:
-            raise Exception( str(self.name) + ' BUS FAULT: A bus cannot have more than one input')
+            self.raise_fault('A bus cannot have more than one input')
 
     '''
     @brief Get image data from the bus
     '''
     def get_data(self):
         if self.data == None:
-            raise Exception( str(self.name) + ' BUS FAULT: Empty bus')
+            self.raise_fault('Empty bus')
 
         return self.data
+
+    def raise_fault(self, msg: str):
+        raise Exception( str(self.name) + ' BUS FAULT: ' + msg)
 
 '''
 @brief The Pipe class corresponds to a processing unit in the pipeline. The methods of this class perform image processing and bus connection tasks.
 '''
 class Pipe(object):
+    auto_counter = -1 #global
+    undefined_arg = None #constant
+   
     '''
-    @param name Unique name across the pipeline for the pipe.
-    @param parent_pipeline Pipeline object where it is nested.
     @param in_formats List of the input buses formats
     @param out_formats List of the output buses formats 
+    @param params (optional) Pipe parameters dictionary with {'param_name':type} relation for each param 
     '''
-    def __init__(self, name: str, parent_pipeline, in_formats: list, out_formats: list):
-        self.name = name
-        self.parent_pipeline = parent_pipeline
+    def __init__(self, in_formats: list, out_formats: list, params: dict = {}):
+        Pipe.auto_counter += 1 
+        self.name = 'Pipe' + str(Pipe.auto_counter)
+        self.parent_pipeline = None
         self.in_formats = in_formats
         self.out_formats = out_formats
+        
+        self.params = params #format: {'param_name':type, ...}
+        self.param_changed_callbacks = {} #format: {'param_name':function, ...}
+        self.arguments = {} #format: {'param_name':value, ...}
+        for param in params:
+            if type(param) != str:
+                self.raise_fault('Param name must be a string. Error in param ' + str(param))
+            
+            if not isinstance(params[param], type):
+                self.raise_fault('Param must have a type. Error in param ' + str(param))
 
-    
+            self.arguments[param] = Pipe.undefined_arg
+
+
+    def set_in_formats(self, in_formats: list):
+        self.in_formats = in_formats
+
+    def set_out_formats(self, out_formats: list):
+        self.out_formats = out_formats
+
+    '''
+    @brief Set a callback method to be called after the param argument changes
+    @param param_name Name of the param
+    @param method Callback method. format: Pipe.method(self, old_argument, new_argument)
+    '''
+    def param_changed_callback(self, param_name: str, method):
+        if param_name not in self.params:
+            self.raise_fault('Undefined param: ' + str(param_name))
+        
+        self.param_changed_callbacks[param_name] = method
+
+    '''
+    @brief Set the value of a param
+    @param param_name Name of the param
+    @param argument Value of the param
+    '''
+    def set_param(self, param_name: str, argument):
+        if param_name not in self.params:
+            self.raise_fault('Undefined param: ' + str(param_name))
+        
+        if not isinstance(argument, self.params[param_name]):
+            self.raise_fault('Invalid argument type for ' + str(param_name) + '. ' + str(argument) + ' is not instance of ' + str(self.params[param_name]))
+
+        old_argument = self.arguments[param_name]
+        self.arguments[param_name] = argument
+
+        if param_name in self.param_changed_callbacks:
+            callback_method = self.param_changed_callbacks[param_name]
+            callback_method(self, old_argument, argument)
+            
+
+    '''
+    @brief Set the reference to the Pipeline object where this Pipe is nested.
+    @param parent_pipeline Pipeline object where this Pipe is nested.
+    '''
+    def set_parent(self, parent_pipeline):
+        self.parent_pipeline = parent_pipeline
+
     '''
     @brief Check if is there any error in the buses settings.
     @param in_bus_names List of the input buses names.
@@ -102,15 +164,15 @@ class Pipe(object):
     '''
     def check_buses(self, in_bus_names: list, out_bus_names: list) -> bool:
         if len(in_bus_names) != len(self.in_formats) or len(out_bus_names) != len(self.out_formats):
-            raise Exception(str(self.name) + ' PIPE FAULT: Number of input or output buses incompatible with the pipe')
+            self.raise_fault('Number of input or output buses incompatible with the pipe')
         
         for i in range(len(in_bus_names)):
             if self.in_formats[i] != self.parent_pipeline.buses[in_bus_names[i]].format:
-                raise Exception(str(self.name) + ' PIPE FAULT: Input buses formats incompatible with the pipe')
+                self.raise_fault('Input buses formats incompatible with the pipe')
         
         for i in range(len(out_bus_names)):
             if self.out_formats[i] != self.parent_pipeline.buses[out_bus_names[i]].format:
-                raise Exception(str(self.name) + ' PIPE FAULT: Output buses formats incompatible with the pipe')
+                self.raise_fault('Output buses formats incompatible with the pipe')
 
 
     '''
@@ -151,5 +213,109 @@ class Pipe(object):
     @return List of output images
     '''
     def callback(self, input: list) -> list:
-        raise Exception(str(self.name) + ' PIPE FAULT: It is not possible to use the Pipe class without overwriting callback')
+        self.raise_fault('It is not possible to use the Pipe class without overwriting callback')
         return []
+
+    def raise_fault(self, msg: str):
+        raise Exception(str(self.name) + ' PIPE FAULT: ' + msg)
+
+
+'''
+@brief A Pipe that does nothing, just transports the image between two buses.
+'''
+class BypassPipe(Pipe):
+    def __init__(self):
+        super(BypassPipe, self).__init__([BusFormat.Universal], [BusFormat.Universal])
+
+    def callback(self, input: list) -> list:
+        return input
+
+
+'''
+@brief The pipeline is a graph of pipes separated by layers and interconnected by buses.
+
+The image must be inserted into an input bus. When processing is done, this image will be
+processed by a pipe circuit and the final result will be deposited on an output bus.
+'''
+class Pipeline(object):
+    def __init__(self):
+        self.buses = {} #format: {'bus_name': bus_object, ...}
+        self.pipes = {} #format: {'pipe_name': pipe_object, ...}
+        self.layers = {} #format: {layer_index: ['pipe_name0', 'pipe_name1',...], ...}
+        self.sequence = [] #format: [layer_index0, layer_index1, layer_index2, ...]
+
+    '''
+    @brief Create a new bus in the pipeline.
+    @param name Unique name across the pipeline for the bus
+    @param format BusFormat of the bus
+    '''
+    def create_bus(self, name: str, format: BusFormat):
+        if type(name) != str:
+            raise Exception('PIPELINE FAULT on create_bus call: name argument is not str: name=' + str(name))
+        
+        if name not in self.buses:
+            new_bus = Bus(name, format)
+            self.buses[name] = new_bus
+        else:
+            raise Exception('PIPELINE FAULT on create_bus call: There is already a bus with the name ' + name)
+             
+    '''
+    @brief Set an existing layer for the pipe.
+    @param name Name of the existing pipe
+    @param layer Name or index of the layer (if it does not already exist in the pipeline, it will be created).
+    '''
+    def set_pipe_layer(self, name: str, layer):
+        if name not in self.pipes:
+            raise Exception('PIPELINE FAULT on set_pipe_layer call: pipe ' + str(name) + ' not found')
+
+        if layer not in self.layers:
+            self.layers[layer] = []
+
+        self.layers[layer].append(name)
+
+    '''
+    @brief Insert a Pipe object in the pipeline
+    @param name Unique name across the pipeline for the Pipe
+    @param pipe Pipe object
+    '''
+    def insert_pipe(self, name: str, pipe: Pipe):
+        if type(name) != str:
+            raise Exception('PIPELINE FAULT on insert_pipe call: name argument is not str: name=' + str(name))
+
+        if not isinstance(pipe, Pipe):
+            raise Exception('PIPELINE FAULT on insert_pipe call: pipe argument is not Pipe: pipe=' + str(pipe))
+
+        if name not in self.pipes:
+            pipe.name = name
+            pipe.set_parent(self)
+            self.pipes[name] = pipe
+        else:
+            raise Exception('PIPELINE FAULT on insert_pipe call: There is already a pipe with the name ' + name)
+
+    '''
+    @brief Define the order witch the layers will be processed.
+    @param sequence Tuple or list of layers names in order of the first to the last that will be processed.
+    '''
+    def set_layers_sequence(self, sequence: tuple):
+        for i in sequence:
+            if i not in self.layers:
+                raise Exception('PIPELINE FAULT on set_layers_sequence call: Undefined layer: ' + str(i))
+
+        self.sequence = sequence
+
+    '''
+    @brief Removes images from all buses and prepares the pipeline for further processing.
+    '''
+    def reset_buses(self):
+        for bus_name in self.buses:
+            bus = self.buses[bus_name]
+            bus.reset()
+
+    '''
+    @brief Run the sequential processing of the pipes.
+    '''
+    def process(self):
+        for layer in self.sequence:
+            for pipe_name in self.layers[layer]:
+                current_pipe = self.pipes[pipe_name]
+                current_pipe.process()
