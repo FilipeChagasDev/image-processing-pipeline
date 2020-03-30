@@ -41,6 +41,15 @@ class BusFormat(Enum):
     Triple = 5 # Triple channel image data (BGR or RGB or HSV)
     Universal = 6 # Single channel or triple channel
 
+bus_compatibility = {
+    BusFormat.BGR: (BusFormat.BGR),
+    BusFormat.RGB: (BusFormat.RGB),
+    BusFormat.HSV: (BusFormat.HSV),
+    BusFormat.Channel: (BusFormat.Channel),
+    BusFormat.Triple: (BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV),
+    BusFormat.Universal: (BusFormat.Universal, BusFormat.Channel, BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV)
+}
+
 '''
 @brief Bus perform the connection between the pipes of the pipeline
 '''
@@ -149,6 +158,21 @@ class Pipe(object):
             callback_method = self.param_changed_callbacks[param_name]
             callback_method(self, old_argument, argument)
             
+    
+    '''
+    @brief Get the value of a param
+    @param param_name Name of the param
+    @return argument Value of the param
+    '''
+    def get_param(self, param_name: str):
+        if param_name not in self.params:
+            self.raise_fault('Undefined param: ' + str(param_name))
+        
+        argument = self.params[param_name]
+        if not isinstance(argument, self.params[param_name]):
+            self.raise_fault('Undefined argument for ' + str(param_name) + '. ' + str(argument) + ' is not instance of ' + str(self.params[param_name]))
+
+        return argument
 
     '''
     @brief Set the reference to the Pipeline object where this Pipe is nested.
@@ -167,7 +191,7 @@ class Pipe(object):
             self.raise_fault('Number of input or output buses incompatible with the pipe')
         
         for i in range(len(in_bus_names)):
-            if self.in_formats[i] != self.parent_pipeline.buses[in_bus_names[i]].format:
+            if self.in_formats[i] not in bus_compatibility[self.parent_pipeline.buses[in_bus_names[i]].format]:
                 self.raise_fault('Input buses formats incompatible with the pipe')
         
         for i in range(len(out_bus_names)):

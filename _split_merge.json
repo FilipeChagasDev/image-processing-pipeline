@@ -1,0 +1,27 @@
+{
+    "info": {
+        "name": "split & merge",
+        "author": "Filipe Chagas",
+        "email": "filipe.ferraz0@gmail.com",
+        "source": "https://github.com/FilipeChagasDev/image-processing-pipeline",
+        "plugin_version": [0,1,0],
+        "ipp_version": [0,1,0]
+    },
+    
+    "path": "_fork_blend.py",
+
+    "classes": [
+        {
+            "name": "SplitPipe",
+            "params": [],
+            "input_formats": "[Triple]",
+            "output_formats": "[Channel, Channel, Channel]"
+        },
+        {
+            "name": "MergePipe",
+            "params": [],
+            "input_formats": "[Channel, Channel, Channel]",
+            "output_formats": "[Triple]"
+        }
+    ]
+}

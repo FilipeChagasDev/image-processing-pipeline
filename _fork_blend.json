@@ -1,0 +1,45 @@
+{
+    "info": {
+        "name": "fork & blend",
+        "author": "Filipe Chagas",
+        "email": "filipe.ferraz0@gmail.com",
+        "source": "https://github.com/FilipeChagasDev/image-processing-pipeline",
+        "plugin_version": [0,1,0],
+        "ipp_version": [0,1,0]
+    },
+
+    "path": "_fork_blend.py",
+
+    "classes": [
+        {
+            "name": "ChannelForkPipe",
+            "params": [["number_of_outputs", "float", "2"]],
+            "input_formats": "[Channel]",
+            "output_formats": "[Channel]*number_of_outputs"
+        },
+        {
+            "name": "TripleForkPipe",
+            "params": [["number_of_outputs", "float", "2"]],
+            "input_formats": "[Triple]",
+            "output_formats": "[Triple]*number_of_outputs"
+        },
+        {
+            "name": "ChannelBlendPipe",
+            "params": [
+                        ["number_of_inputs", "float", "2"],
+                        ["weights", "[float]*number_of_inputs", "[1]*number_of_inputs"]
+                      ],
+            "input_formats": "[Channel]*number_of_inputs",
+            "output_formats": "[Channel]"
+        },
+        {
+            "name": "TripleBlendPipe",
+            "params": [
+                        ["number_of_inputs", "float", "2"],
+                        ["weights", "[float]*number_of_inputs", "[1]*number_of_inputs"]
+                      ],
+            "input_formats": "[Triple]*number_of_inputs",
+            "output_formats": "[Triple]"
+        }
+    ]
+}

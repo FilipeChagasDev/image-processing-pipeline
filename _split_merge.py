@@ -21,14 +21,32 @@
 # SOFTWARE.
 
 
-# @file split_merge.py
+# @file _split_merge.py
 # @author Filipe Chagas
 # @date 28 / 03 / 2020
 # @brief Split and merge pipes
 # @see https://github.com/FilipeChagasDev/image-processing-pipeline
 
-import pipeline as pl
 import numpy as np
+import pipeline as pl
+
+def get_info():
+    x = {
+        'name': 'split & merge',
+        'author': 'Filipe Chagas',
+        'email': 'filipe.ferraz0@gmail.com',
+        'source': 'https://github.com/FilipeChagasDev/image-processing-pipeline',
+        'plugin_version': (0,1,0),
+        'ipp_version': (0,1,0)
+    }
+    return x
+
+def get_classes():
+    x = {
+        'SplitPipe': SplitPipe,
+        'MergePipe': MergePipe
+    }
+    return x
 
 '''
 @brief Splits the 3 channels of the input image for 3 single channel buses.
