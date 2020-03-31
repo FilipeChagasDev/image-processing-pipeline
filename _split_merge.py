@@ -78,7 +78,7 @@ class MergePipe(pl.Pipe):
     def callback(self, input: list) -> list:
         in_data0, in_data1, in_data2 = input
         
-        shape = in_data0.shape #(W,H,Channels)
+        shape = [in_data0.shape[0],in_data0.shape[1],1] #[W,H,Channels]
         shape[2] = 3 # 3 Channels
         output_data = np.zeros(shape, np.uint8)
 

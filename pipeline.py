@@ -42,13 +42,27 @@ class BusFormat(Enum):
     Universal = 6 # Single channel or triple channel
 
 bus_compatibility = {
-    BusFormat.BGR: (BusFormat.BGR),
-    BusFormat.RGB: (BusFormat.RGB),
-    BusFormat.HSV: (BusFormat.HSV),
-    BusFormat.Channel: (BusFormat.Channel),
-    BusFormat.Triple: (BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV),
-    BusFormat.Universal: (BusFormat.Universal, BusFormat.Channel, BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV)
+    BusFormat.BGR: [BusFormat.BGR],
+    BusFormat.RGB: [BusFormat.RGB],
+    BusFormat.HSV: [BusFormat.HSV],
+    BusFormat.Channel: [BusFormat.Channel],
+    BusFormat.Triple: [BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV],
+    BusFormat.Universal: [BusFormat.Universal, BusFormat.Channel, BusFormat.Triple, BusFormat.BGR, BusFormat.RGB, BusFormat.HSV]
 }
+
+def fit_tuple(input_tuple: tuple, default_value, out_len: int) -> tuple:
+    in_len = len(input_tuple)
+
+    out = [default_value] * out_len
+    
+    if out_len >= in_len:
+        for i in range(in_len):
+            out[i] = input_tuple[i]
+    else:
+        for i in range(out_len):
+            out[i] = input_tuple[i]
+            
+    return tuple(out)
 
 '''
 @brief Bus perform the connection between the pipes of the pipeline
@@ -62,19 +76,22 @@ class Bus(object):
         self.name = name
         self.format = format
         self.data = None
+        self.empty = True
 
     '''
     @brief Reset attributes to a new feed-foward process. 
     '''
     def reset(self):
         self.data = None
+        self.empty = True
 
     '''
     @brief Put an image data into the bus
     '''
     def set_data(self, data):
-        if self.data == None:
+        if self.empty == True:
             self.data = data
+            self.empty = False
         else:
             self.raise_fault('A bus cannot have more than one input')
 
@@ -82,7 +99,7 @@ class Bus(object):
     @brief Get image data from the bus
     '''
     def get_data(self):
-        if self.data == None:
+        if self.empty == True:
             self.raise_fault('Empty bus')
 
         return self.data
@@ -195,7 +212,7 @@ class Pipe(object):
                 self.raise_fault('Input buses formats incompatible with the pipe')
         
         for i in range(len(out_bus_names)):
-            if self.out_formats[i] != self.parent_pipeline.buses[out_bus_names[i]].format:
+            if self.out_formats[i] not in bus_compatibility[self.parent_pipeline.buses[out_bus_names[i]].format]:
                 self.raise_fault('Output buses formats incompatible with the pipe')
 
 
@@ -222,10 +239,10 @@ class Pipe(object):
         for i in range(len(output_list)):
             #Check output data format by shape
             if self.out_formats[i] == BusFormat.Channel:
-                if output_list[i].shape[2] != 1:
+                if fit_tuple(output_list[i].shape,1,3)[2] != 1:
                     raise Exception(str(self.name) + ' PIPE FAULT: Pipe.callback returning invalid data format. Internal error.')
             elif self.out_formats[i] != BusFormat.Universal:
-                if output_list[i].shape[2] != 3:
+                if fit_tuple(output_list[i].shape,1,3)[2] != 3:
                     raise Exception(str(self.name) + ' PIPE FAULT: Pipe.callback returning invalid data format. Internal error.')
 
             #Send data to bus
@@ -265,6 +282,8 @@ class Pipeline(object):
     def __init__(self):
         self.buses = {} #format: {'bus_name': bus_object, ...}
         self.pipes = {} #format: {'pipe_name': pipe_object, ...}
+        self.pipe_inputs = {} #format: {'pipe_name': ['bus0', 'bus1',...], ...}
+        self.pipe_outputs = {} #format: {'pipe_name': ['bus0', 'bus1',...], ...}
         self.layers = {} #format: {layer_index: ['pipe_name0', 'pipe_name1',...], ...}
         self.sequence = [] #format: [layer_index0, layer_index1, layer_index2, ...]
 
@@ -301,8 +320,10 @@ class Pipeline(object):
     @brief Insert a Pipe object in the pipeline
     @param name Unique name across the pipeline for the Pipe
     @param pipe Pipe object
+    @param input_buses List of names of input buses
+    @parem output_buses List of names of output buses
     '''
-    def insert_pipe(self, name: str, pipe: Pipe):
+    def insert_pipe(self, name: str, pipe: Pipe, input_buses: list, output_buses: list):
         if type(name) != str:
             raise Exception('PIPELINE FAULT on insert_pipe call: name argument is not str: name=' + str(name))
 
@@ -313,6 +334,8 @@ class Pipeline(object):
             pipe.name = name
             pipe.set_parent(self)
             self.pipes[name] = pipe
+            self.pipe_inputs[name] = input_buses
+            self.pipe_outputs[name] = output_buses
         else:
             raise Exception('PIPELINE FAULT on insert_pipe call: There is already a pipe with the name ' + name)
 
@@ -342,4 +365,4 @@ class Pipeline(object):
         for layer in self.sequence:
             for pipe_name in self.layers[layer]:
                 current_pipe = self.pipes[pipe_name]
-                current_pipe.process()
+                current_pipe.process(self.pipe_inputs[pipe_name], self.pipe_outputs[pipe_name])
