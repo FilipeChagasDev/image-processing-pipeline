@@ -3,8 +3,12 @@ TEST SCRIPT FOR TRIPLE FORK & BLEND
 By Filipe Chagas
 '''
 
+import sys
+sys.path.append('../src')
+sys.path.append('../src/plugins')
+
 import pipeline as pl
-import _fork_blend as fb
+import fork_blend as fb
 import numpy as np
 import random as rd
 

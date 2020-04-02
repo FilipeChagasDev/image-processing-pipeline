@@ -27,6 +27,9 @@
 # @brief Split and merge pipes
 # @see https://github.com/FilipeChagasDev/image-processing-pipeline
 
+import sys
+sys.path.append('../')
+
 import numpy as np
 import pipeline as pl
 

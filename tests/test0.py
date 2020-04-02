@@ -3,8 +3,12 @@ TEST SCRIPT FOR SPLIT & MERGE
 By Filipe Chagas
 '''
 
+import sys
+sys.path.append('../src')
+sys.path.append('../src/plugins')
+
 import pipeline as pl
-import _split_merge as sm
+import split_merge as sm
 import numpy as np
 import random as rd
 

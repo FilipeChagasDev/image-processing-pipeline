@@ -1,7 +1,7 @@
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
-![Version](https://img.shields.io/badge/Version-v0.1.0-green)
+![Version](https://img.shields.io/badge/Version-v0.1.1-green)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ## Brief

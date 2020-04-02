@@ -8,7 +8,7 @@
         "ipp_version": [0,1,0]
     },
 
-    "path": "_fork_blend.py",
+    "path": "fork_blend.py",
 
     "classes": [
         {
