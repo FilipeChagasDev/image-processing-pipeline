@@ -1,6 +1,12 @@
+'''
+TEST SCRIPT FOR SPLIT & MERGE
+By Filipe Chagas
+'''
+
 import pipeline as pl
 import _split_merge as sm
 import numpy as np
+import random as rd
 
 #pipeline
 my_pipeline = pl.Pipeline()
@@ -24,15 +30,34 @@ my_pipeline.set_pipe_layer('my_merge', 1)
 
 my_pipeline.set_layers_sequence((0,1))
 
-#input
-in_data = np.array([[[0,1,2],[3,4,5]]], np.uint8)
-print(in_data)
+if __name__ == '__main__':
+    for n in range(1000):
+        print('TEST ' + str(n)) 
+        
+        #random input
+        in_data = np.array(np.random.rand(rd.randint(1,500),rd.randint(1,500), 3)*255, np.uint8)
+        print(in_data)
 
-my_pipeline.buses['input'].set_data(in_data)
-my_pipeline.process()
-out_data = my_pipeline.buses['output'].get_data()
+        #process and get out
+        my_pipeline.buses['input'].set_data(in_data)
+        my_pipeline.process()
+        out_data = my_pipeline.buses['output'].get_data()
 
-print(out_data)
+        print(out_data)
 
-if (in_data == out_data).all():
-    print('Success!')
+        #output must be equal to input
+        ans = (in_data == out_data) 
+        if not isinstance(ans, bool):
+            if ans.all():
+                print('Success!')
+            else:
+                print('FAILURE')
+                break
+        else:
+            if ans:
+                print('Success!')
+            else:
+                print('FAILURE')
+                break
+
+        my_pipeline.reset_buses()

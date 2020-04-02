@@ -90,7 +90,7 @@ class Bus(object):
     '''
     def set_data(self, data):
         if self.empty == True:
-            self.data = data
+            self.data = np.array(data, np.uint8)
             self.empty = False
         else:
             self.raise_fault('A bus cannot have more than one input')
@@ -185,7 +185,7 @@ class Pipe(object):
         if param_name not in self.params:
             self.raise_fault('Undefined param: ' + str(param_name))
         
-        argument = self.params[param_name]
+        argument = self.arguments[param_name]
         if not isinstance(argument, self.params[param_name]):
             self.raise_fault('Undefined argument for ' + str(param_name) + '. ' + str(argument) + ' is not instance of ' + str(self.params[param_name]))
 
