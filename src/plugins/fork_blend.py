@@ -39,8 +39,8 @@ def get_info():
         'author': 'Filipe Chagas',
         'email': 'filipe.ferraz0@gmail.com',
         'source': 'https://github.com/FilipeChagasDev/image-processing-pipeline',
-        'plugin_version': (0,1,0),
-        'ipp_version': (0,1,0)
+        'plugin_version': (1,0,0),
+        'ipp_version': (1,0,0)
     }
     return x
 
@@ -59,16 +59,20 @@ def get_classes():
 [format] => <fork> => [format]*number_of_outputs
 '''
 class BaseForkPipe(pl.Pipe):
+    my_params = {'number_of_outputs':int}
+    my_default_args = {'number_of_outputs':2}
+
     def __init__(self, bus_format: pl.BusFormat):
         self.n_outs = 2
         self.bus_format = bus_format
         default_in_formats = [bus_format]
         default_out_formats = [bus_format] * self.n_outs
 
-        params = {'number_of_outputs':int}
+        super(BaseForkPipe, self).__init__(default_in_formats, default_out_formats, BaseForkPipe.my_params)
 
-        super(BaseForkPipe, self).__init__(default_in_formats, default_out_formats, params)
-        self.arguments['number_of_outputs'] = 2
+        for p in BaseForkPipe.my_default_args:
+            self.arguments[p] = BaseForkPipe.my_default_args[p]
+        
         self.param_changed_callback('number_of_outputs', BaseForkPipe.n_outs_changed)
         
         
@@ -87,16 +91,20 @@ class BaseForkPipe(pl.Pipe):
 [format]*number_of_inputs => <blend> => [format]
 '''
 class BaseBlendPipe(pl.Pipe):
+    my_params = {'number_of_inputs':int, 'weights':list}
+    my_default_args = {'number_of_inputs':2, 'weights':[1,1]}
+
     def __init__(self, bus_format: pl.BusFormat):
         self.n_ins = 2
         self.bus_format = bus_format
         default_in_formats = [bus_format] * self.n_ins
         default_out_formats = [bus_format]
 
-        params = {'number_of_inputs':int, 'weights':list}
+        super(BaseBlendPipe, self).__init__(default_in_formats, default_out_formats, BaseBlendPipe.my_params)
 
-        super(BaseBlendPipe, self).__init__(default_in_formats, default_out_formats, params)
-        self.arguments['number_of_inputs'] = 2
+        for p in BaseBlendPipe.my_default_args:
+            self.arguments[p] = BaseBlendPipe.my_default_args[p]
+
         self.param_changed_callback('number_of_inputs', BaseBlendPipe.n_ins_changed)
 
     def n_ins_changed(self, old_arg: int, new_arg: int):

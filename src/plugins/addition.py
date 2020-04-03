@@ -39,8 +39,8 @@ def get_info():
         'author': 'Filipe Chagas',
         'email': 'filipe.ferraz0@gmail.com',
         'source': 'https://github.com/FilipeChagasDev/image-processing-pipeline',
-        'plugin_version': (0,1,0),
-        'ipp_version': (0,1,0)
+        'plugin_version': (1,0,0),
+        'ipp_version': (1,0,0)
     }
     return x
 
@@ -51,18 +51,21 @@ def get_classes():
     return x
 
 class AdditionPipe(pl.Pipe):
+    #constants
+    my_params = {'value':int, 'clipping': bool}
+    my_default_args = {'value':0, 'clipping': True}
+    
+    #static functions
     clip = np.vectorize(lambda x: 255 if x > 255 else (0 if x < 0 else (x)))
     
     def __init__(self):
         self.value = 0
         self.clipping = True
         
-        params = {'value':int, 'clipping': bool}
+        super(AdditionPipe, self).__init__([pl.BusFormat.Universal], [pl.BusFormat.Universal], AdditionPipe.my_params)
         
-        super(AdditionPipe, self).__init__([pl.BusFormat.Universal], [pl.BusFormat.Universal], params)
-        
-        self.arguments['value'] = self.value
-        self.arguments['clipping'] = self.clipping
+        for p in AdditionPipe.my_default_args:
+            self.arguments[p] = AdditionPipe.my_default_args[p]
 
         self.param_changed_callback('value', AdditionPipe.value_changed)
         self.param_changed_callback('clipping', AdditionPipe.clipping_changed)

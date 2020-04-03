@@ -39,8 +39,8 @@ def get_info():
         'author': 'Filipe Chagas',
         'email': 'filipe.ferraz0@gmail.com',
         'source': 'https://github.com/FilipeChagasDev/image-processing-pipeline',
-        'plugin_version': (0,1,0),
-        'ipp_version': (0,1,0)
+        'plugin_version': (1,0,0),
+        'ipp_version': (1,0,0)
     }
     return x
 
@@ -57,6 +57,9 @@ def get_classes():
 [Triple] => <Split> => [Channel, Channel, Channel]
 '''
 class SplitPipe(pl.Pipe):
+    my_params = {}
+    my_default_args = {}
+
     def __init__(self):
         in_formats = [pl.BusFormat.Triple]
         out_formats = [pl.BusFormat.Channel, pl.BusFormat.Channel, pl.BusFormat.Channel]
@@ -66,13 +69,15 @@ class SplitPipe(pl.Pipe):
         data = input[0]
         return [data[:,:,0],data[:,:,1],data[:,:,2]]
 
-
 '''
 @brief Merge the 3 input buses for the output triple bus.
 
 [Channel, Channel, Channel] => <Merge> => [Triple]
 '''
 class MergePipe(pl.Pipe):
+    my_params = {}
+    my_default_args = {}
+    
     def __init__(self):
         in_formats = [pl.BusFormat.Channel, pl.BusFormat.Channel, pl.BusFormat.Channel]
         out_formats = [pl.BusFormat.Triple]

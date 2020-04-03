@@ -35,7 +35,7 @@ my_pipeline.set_pipe_layer('my_merge', 1)
 my_pipeline.set_layers_sequence((0,1))
 
 if __name__ == '__main__':
-    for n in range(1000):
+    for n in range(100):
         print('TEST ' + str(n)) 
         
         #random input

@@ -1,7 +1,7 @@
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
-![Version](https://img.shields.io/badge/Version-v0.1.2-red)
+![Version](https://img.shields.io/badge/Version-v0.5.1-red)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Brief
@@ -22,16 +22,16 @@ This program can be integrated into another Python application as a library.
 ## Progress
 
 ### Main architecture
-* [x] Bus class *(done at v0.1.0; last change at v0.1.1; tested)*
-* [x] Pipe class *(done at v0.1.0; last change at v0.1.1; tested)*
+* [x] Bus class *(done at v0.1.0; tested)*
+* [x] Pipe class *(done at v0.1.0; tested)*
 * [x] Pipeline class *(done at 0.1.0; tested)*
-* [x] Plug-in loading *(done at 0.1.2; tested)*
+* [x] Plug-in loading *(done at 0.4.0; tested)*
 * [ ] XML parsing
 
 ### Pipes
-* [x] Split and merge pipes *(done at 0.1.0; tested)*
-* [x] Fork and blend pipes *(done at 0.1.0; tested)*    
-* [ ] Addition pipe
+* [x] Split and merge pipes *(done at 0.2.0; tested)*
+* [x] Fork and blend pipes *(done at 0.3.0; tested)*    
+* [x] Addition pipe *(done at 0.5.0; tested)*
 * [ ] Product pipe
 * [ ] BGR to HSV converter pipe
 * [ ] HSV to BGR converter pipe

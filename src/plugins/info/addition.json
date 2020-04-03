@@ -1,0 +1,21 @@
+{
+    "info": {
+        "name": "addition",
+        "author": "Filipe Chagas",
+        "email": "filipe.ferraz0@gmail.com",
+        "source": "https://github.com/FilipeChagasDev/image-processing-pipeline",
+        "plugin_version": [1,0,0],
+        "ipp_version": [1,0,0]
+    },
+
+    "path": "addition.py",
+
+    "classes": [
+        {
+            "name": "AdditionPipe",
+            "params": [["value", "int", "0"], ["clipping", "bool", "True"]],
+            "input_formats": "[Universal]",
+            "output_formats": "[Universal]"
+        }
+    ]
+}

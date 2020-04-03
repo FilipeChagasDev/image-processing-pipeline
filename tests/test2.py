@@ -43,7 +43,7 @@ my_pipeline.set_layers_sequence((0,1))
 #test
 tolerance = 1
 if __name__ == '__main__':
-    for n in range(1000):
+    for n in range(100):
         #random 4 weights
         curr_weights = [rd.random()*10 for x in [None]*4]
         w_sum = sum(curr_weights)

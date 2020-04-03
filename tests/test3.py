@@ -34,7 +34,7 @@ my_pipeline.set_layers_sequence([0])
 
 #test
 if __name__ == '__main__':
-    for n in range(1000):
+    for n in range(100):
         print('TEST ' + str(n)) 
         
         #input data
