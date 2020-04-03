@@ -7,7 +7,9 @@
 ## Brief
 **Image Processing Pipeline (IPP)** is a Python image processing helper.
 
-This program processes images through a pipeline architecture, where the filters are arranged as pipes and connected by buses.
+This program processes images through a **pipeline architecture**, where the filters are arranged as pipes and connected by buses.
+
+![PipelineArch0](misc/arch0.png)
 
 This program can be integrated into another Python application as a library.
 
