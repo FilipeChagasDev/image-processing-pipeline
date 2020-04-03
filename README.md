@@ -1,7 +1,7 @@
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
-![Version](https://img.shields.io/badge/Version-v0.5.1-red)
+![Version](https://img.shields.io/badge/Version-v0.6.0-red)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Brief
@@ -32,7 +32,7 @@ This program can be integrated into another Python application as a library.
 * [x] Split and merge pipes *(done at 0.2.0; tested)*
 * [x] Fork and blend pipes *(done at 0.3.0; tested)*    
 * [x] Addition pipe *(done at 0.5.0; tested)*
-* [ ] Product pipe
+* [x] Product pipe *(done at 0.6.0; tested)*
 * [ ] BGR to HSV converter pipe
 * [ ] HSV to BGR converter pipe
 * [ ] RGB to BGR converter pipe

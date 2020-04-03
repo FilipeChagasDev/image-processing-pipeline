@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 
-# @file _fork_blend.py
+# @file fork_blend.py
 # @author Filipe Chagas
 # @date 28 / 03 / 2020
 # @brief fork and blend pipes
@@ -74,8 +74,6 @@ class BaseForkPipe(pl.Pipe):
             self.arguments[p] = BaseForkPipe.my_default_args[p]
         
         self.param_changed_callback('number_of_outputs', BaseForkPipe.n_outs_changed)
-        
-        
 
     def n_outs_changed(self, old_arg: int, new_arg: int):
         self.set_out_formats( [self.bus_format] * new_arg )

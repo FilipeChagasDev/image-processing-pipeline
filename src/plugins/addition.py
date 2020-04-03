@@ -24,7 +24,7 @@
 # @file _fork_blend.py
 # @author Filipe Chagas
 # @date 28 / 03 / 2020
-# @brief fork and blend pipes
+# @brief product pipe
 # @see https://github.com/FilipeChagasDev/image-processing-pipeline
 
 import sys
