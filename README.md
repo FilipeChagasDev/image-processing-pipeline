@@ -1,3 +1,5 @@
+<img src="misc/logo.png" width="601" height="165">
+
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
@@ -12,6 +14,9 @@ This program processes images through a **pipeline architecture**, where the fil
 ![PipelineArch0](misc/arch0.png)
 
 This program can be integrated into another Python application as a library.
+
+## Wiki
+https://github.com/FilipeChagasDev/image-processing-pipeline/wiki
 
 ## Dependencies
 * Python v3
