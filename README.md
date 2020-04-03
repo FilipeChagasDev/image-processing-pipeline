@@ -1,8 +1,8 @@
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
-![Version](https://img.shields.io/badge/Version-v0.1.2-green)
-![License](https://img.shields.io/badge/License-MIT-red)
+![Version](https://img.shields.io/badge/Version-v0.1.2-red)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Brief
 **Image Processing Pipeline (IPP)** is a Python image processing helper.

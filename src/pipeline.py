@@ -204,15 +204,18 @@ class Pipe(object):
     @param out_bus_names List of the output buses names.
     '''
     def check_buses(self, in_bus_names: list, out_bus_names: list) -> bool:
+        print(self.parent_pipeline.buses[in_bus_names[0]].format)
+        print(self.parent_pipeline.buses[out_bus_names[0]].format)
         if len(in_bus_names) != len(self.in_formats) or len(out_bus_names) != len(self.out_formats):
             self.raise_fault('Number of input or output buses incompatible with the pipe')
-        
+
         for i in range(len(in_bus_names)):
-            if self.in_formats[i] not in bus_compatibility[self.parent_pipeline.buses[in_bus_names[i]].format]:
+            print(self.in_formats[i])
+            if self.parent_pipeline.buses[in_bus_names[i]].format not in bus_compatibility[self.in_formats[i]]:
                 self.raise_fault('Input buses formats incompatible with the pipe')
-        
-        for i in range(len(out_bus_names)):
-            if self.out_formats[i] not in bus_compatibility[self.parent_pipeline.buses[out_bus_names[i]].format]:
+
+        for j in range(len(out_bus_names)):
+            if self.parent_pipeline.buses[out_bus_names[j]].format not in bus_compatibility[self.out_formats[j]]:
                 self.raise_fault('Output buses formats incompatible with the pipe')
 
 
