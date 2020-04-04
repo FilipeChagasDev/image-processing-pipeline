@@ -3,7 +3,7 @@
 # Image Processing Pipeline (IPP)
 
 ![Language](https://img.shields.io/badge/Language-Python3-blue)
-![Version](https://img.shields.io/badge/Version-v0.6.0-red)
+![Version](https://img.shields.io/badge/Version-v0.7.0-red)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Brief
@@ -34,24 +34,34 @@ https://github.com/FilipeChagasDev/image-processing-pipeline/wiki
 * [x] Pipeline class *(done at 0.1.0; tested)*
 * [x] Plug-in loading *(done at 0.4.0; tested)*
 * [ ] XML parsing
+* [ ] Helper
 
 ### Pipes
 * [x] Split and merge pipes *(done at 0.2.0; tested)*
 * [x] Fork and blend pipes *(done at 0.3.0; tested)*    
 * [x] Addition pipe *(done at 0.5.0; tested)*
 * [x] Product pipe *(done at 0.6.0; tested)*
+* [x] Hadamard pipe *(done at 0.7.0; tested)*
+* [ ] Amplify pipe
+* [ ] Binarize pipe
 * [ ] BGR to HSV converter pipe
 * [ ] HSV to BGR converter pipe
 * [ ] RGB to BGR converter pipe
 * [ ] BGR to RGB converter pipe
+* [ ] Colorize pipe
 * [ ] Equalize histogram pipe
 * [ ] Ajust average pipe
 * [ ] Ajust deviation pipe
-* [ ] Gaussian blur pipeblue
 * [ ] Median blur pipe
+* [ ] Convolution pipe
+* [ ] Functional generator pipe
+* [ ] Functional processor pipe
+* [ ] Space domain to frequency domain pipe
+* [ ] Frequency domain to space domain pipe
 
 ### Documentation
-* [ ] Abstract
+* [x] Abstract
+* [ ] Introduction
 * [ ] Architecture overview
 * [ ] Pipe architecture explanation
 * [ ] Bus architecture explanation
@@ -68,5 +78,20 @@ https://github.com/FilipeChagasDev/image-processing-pipeline/wiki
 * [ ] Ajust deviation pipe explanation
 * [ ] Gaussian blur pipe explanation
 * [ ] Median blur pipe explanation
-* [ ] Examples
-* [ ] Tutorials
+* [ ] Tutorial 0 - Basic bypass pipeline 
+* [ ] Tutorial 1 - Images mixing (blend)
+* [ ] Tutorial 2 - Grayscale effect (split & blend)
+* [ ] Tutorial 3 - Sepia effect (split & blend & colorize)
+* [ ] Tutorial 4 - Soft blue effect (split & amplify & addition)
+* [ ] Tutorial 5 - Brightness ajust (bgr->hsv & split & addition & merge & hsv->bgr)
+* [ ] Tutorial 6 - Saturation ajust (bgr->hsv & split & addition & merge & hsv->bgr)
+* [ ] Tutorial 7.1 - Contrast ajust 1 (bgr->hsv & split & amplify & merge & hsv->bgr)
+* [ ] Tutorial 7.2 - Contrast ajust 2 (bgr->hsv & split & product & merge & hsv->bgr)
+* [ ] Tutorial 7.3 - Contrast ajust 3 (bgr->hsv & split & ajust deviation & merge & hsv->bgr)
+* [ ] Tutorial 7.4 - Contrast ajust 4 (bgr->hsv & split & equalize hist & merge & hsv->bgr)
+* [ ] Tutorial 7.5 - Contrast ajust 5 (bgr->hsv & split & fork & equalize hist & blend & merge & hsv->bgr)
+* [ ] Tutorial 7.6 - Contrast ajust 6 (bgr->hsv & split & fork & functional processor & blend & merge & hsv->bgr)
+* [ ] Tutorial 8.1 - Smoothing 1 (median blur)
+* [ ] Tutorial 8.2 - Smoothing 2 (convolution with gaussian kernel)
+* [ ] Tutorial 9 - Edge segmentation (bgr->hsv & convolution with laplacian or derivative kernel & binarize & fork & merge)
+* [ ] Tutorial 10 - sharpness ajust (split & space to freq & functional gen & fork & hadamard & freq to space & merge)
